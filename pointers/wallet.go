@@ -1,6 +1,9 @@
 package pointers
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // Stringer is used to format the data to be a string
 type Stringer interface {
@@ -30,4 +33,15 @@ func (w *Wallet) Deposit(amount Bitcoin) {
 
 func (w *Wallet) Balance() Bitcoin {
 	return w.balance
+}
+
+// ErrInsufficientFunds is holding error message. It's also global to the package.
+var ErrInsufficientFunds = errors.New("cannot withdraw, insufficient funds")
+
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+	if amount > w.balance {
+		return ErrInsufficientFunds
+	}
+	w.balance -= amount
+	return nil
 }
