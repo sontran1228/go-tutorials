@@ -13,12 +13,9 @@ func TestWalk(t *testing.T) {
 		ExpectedCalls []string
 	}{
 		{
-			"Struct with one string field",
-			struct {
-				Name string
-				Age  int
-			}{"Chris", 33},
-			[]string{"Chris"},
+			"Nested fields",
+			Person{"Chris", Profile{33, "London"}},
+			[]string{"Chris", "London"},
 		},
 	}
 
@@ -33,4 +30,14 @@ func TestWalk(t *testing.T) {
 		}
 	}
 
+}
+
+type Person struct {
+	Name    string
+	Profile Profile
+}
+
+type Profile struct {
+	Age  int
+	City string
 }
