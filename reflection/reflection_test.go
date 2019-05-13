@@ -13,8 +13,8 @@ func TestWalk(t *testing.T) {
 		ExpectedCalls []string
 	}{
 		{
-			"Nested fields",
-			Person{"Chris", Profile{33, "London"}},
+			"Pointers to things",
+			&Person{"Chris", Profile{33, "London"}},
 			[]string{"Chris", "London"},
 		},
 	}
