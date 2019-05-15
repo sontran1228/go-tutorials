@@ -31,7 +31,7 @@ func TestGETPlayers(t *testing.T) {
 	server := &PlayerServer{&store}
 
 	t.Run("returns Pepper's score", func(t *testing.T) {
-		request, _ := newGetScoreRequest("Pepper")
+		request := newGetScoreRequest("Pepper")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -41,7 +41,7 @@ func TestGETPlayers(t *testing.T) {
 	})
 
 	t.Run("returns Floyd's score", func(t *testing.T) {
-		request, _ := newGetScoreRequest("Floyd")
+		request := newGetScoreRequest("Floyd")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -51,7 +51,7 @@ func TestGETPlayers(t *testing.T) {
 	})
 
 	t.Run("returns 404 on missing players", func(t *testing.T) {
-		request, _ := newGetScoreRequest("Apollo")
+		request := newGetScoreRequest("Apollo")
 		response := httptest.NewRecorder()
 
 		server.ServeHTTP(response, request)
@@ -86,6 +86,23 @@ func TestStoreWins(t *testing.T) {
 
 }
 
+func TestRecordingWinsAndRetrievingThem(t *testing.T) {
+	store := NewInMemoryPlayerStore()
+	server := PlayerServer{store}
+	player := "Pepper"
+
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+	server.ServeHTTP(httptest.NewRecorder(), newPostWinRequest(player))
+
+	response := httptest.NewRecorder()
+
+	server.ServeHTTP(response, newGetScoreRequest(player))
+
+	assertStatus(t, response.Code, http.StatusOK)
+
+	assertResponseBody(t, response.Body.String(), "3")
+}
 func assertStatus(t *testing.T, got, want int) {
 	t.Helper()
 	if got != want {
@@ -98,8 +115,9 @@ func newPostWinRequest(name string) *http.Request {
 	return req
 }
 
-func newGetScoreRequest(name string) (*http.Request, error) {
-	return http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
+func newGetScoreRequest(name string) *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/players/%s", name), nil)
+	return req
 }
 
 func assertResponseBody(t *testing.T, got, want string) {
