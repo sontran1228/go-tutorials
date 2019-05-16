@@ -15,18 +15,26 @@ type PlayerStore interface {
 // It will an implementation of "http.Handler" interface by implementing function "ServeHTTP"
 // see more: server.go -> type Handler interface
 type PlayerServer struct {
-	store PlayerStore
+	store  PlayerStore
+	router *http.ServeMux
+}
+
+// NewPlayerServer init PlayerServer object. It's one time initialization of router
+func NewPlayerServer(store PlayerStore) *PlayerServer {
+	p := &PlayerServer{
+		store, http.NewServeMux(),
+	}
+
+	p.router.Handle("/league", http.HandlerFunc(p.leagueHandler))
+
+	p.router.Handle("/players/", http.HandlerFunc(p.playerHandler))
+
+	return p
 }
 
 // PlayerServer return player information.
 func (p *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	router := http.NewServeMux()
-
-	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-
-	router.Handle("/players/", http.HandlerFunc(p.playerHandler))
-
-	router.ServeHTTP(w, r)
+	p.router.ServeHTTP(w, r)
 }
 
 func (p *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
