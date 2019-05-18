@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 )
 
 // FileSystemPlayerStore is to store data in file
@@ -50,6 +51,9 @@ func initialisePlayerDBFile(file *os.File) error {
 
 // GetLeague return all players information
 func (s *FileSystemPlayerStore) GetLeague() League {
+	sort.Slice(s.league, func(i, j int) bool {
+		return s.league[i].Wins > s.league[j].Wins
+	})
 	return s.league
 }
 

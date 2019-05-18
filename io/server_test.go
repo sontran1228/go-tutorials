@@ -165,6 +165,7 @@ func assertResponseBody(t *testing.T, got, want string) {
 }
 
 func assertLeague(t *testing.T, got, want []Player) {
+	t.Helper()
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %v want %v", got, want)
 	}
