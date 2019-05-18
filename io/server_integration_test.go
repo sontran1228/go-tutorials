@@ -9,7 +9,7 @@ import (
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
 	database, cleandatabase := createTempFile(t, "")
 	defer cleandatabase()
-	store := &FileSystemPlayerStore{database}
+	store := NewFileSystemPlayerStore(database)
 
 	server := NewPlayerServer(store)
 	player := "Pepper"
