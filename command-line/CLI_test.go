@@ -1,14 +1,29 @@
-package poker
+package poker_test
 
-import "testing"
+import (
+	poker "go-tutorials/command-line"
+	"strings"
+	"testing"
+)
 
 func TestCLI(t *testing.T) {
-	playerStore := &StubPlayerStore{}
-	cli := &CLI{playerStore}
+	t.Run("record chris win from user input", func(t *testing.T) {
+		in := strings.NewReader("Chris wins\n")
+		playerStore := &poker.StubPlayerStore{}
 
-	cli.PlayPoker()
+		cli := poker.NewCLI(playerStore, in)
+		cli.PlayPoker()
 
-	if len(playerStore.winCalls) != 1 {
-		t.Fatal("expected a win call but didn't get any")
-	}
+		poker.AssertPlayerWin(t, playerStore, "Chris")
+	})
+
+	t.Run("record cleo win from user input", func(t *testing.T) {
+		in := strings.NewReader("Cleo wins\n")
+		playerStore := &poker.StubPlayerStore{}
+
+		cli := poker.NewCLI(playerStore, in)
+		cli.PlayPoker()
+
+		poker.AssertPlayerWin(t, playerStore, "Cleo")
+	})
 }
