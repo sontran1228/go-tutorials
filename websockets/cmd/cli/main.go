@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	poker "go-tutorials/time"
+	poker "go-tutorials/websockets"
 	"log"
 	"os"
 )
